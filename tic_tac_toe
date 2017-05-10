@@ -1,0 +1,157 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace KiKcore
+{
+        public enum ruch
+        {
+            kolko,
+            krzyzyk,
+            brak
+        }
+        public enum gracz
+        {
+            kolko,
+            krzyzyk
+        }
+        public enum rezultatgry
+        {
+            remis,
+            nierozstrzygnieta,
+            wygralokolko,
+            wygralkrzyzyk
+        }
+        public class Plansza 
+        {
+            ruch[] tablica = new ruch[9];
+
+            public bool zaznaczruch(int x, int y, ruch znak)
+            {
+
+                int zmienna = 0;
+
+                switch (x)
+                {
+                    case 1:
+                        {
+                            zmienna = y - 1;
+                            break;
+                        }
+                    case 2:
+                        {
+                            zmienna = x + y;
+                            break;
+                        }
+                    case 3:
+                        {
+                            zmienna = x + y + 2;
+                            break;
+                        }
+                    default: break;
+
+                }
+                if (ruch.brak == tablica[zmienna])
+                {
+                    tablica[zmienna] = znak;
+                    return true;
+                }
+                else
+                    return false;
+
+            }
+            public rezultatgry sprawdzrezultat()
+            {
+                int countO = 0; int countX = 0; int i = 0;/// Liczba kolek i krzyzykow.
+
+                for (i = 0; i < 9; i++) /// W poziomie.
+                {
+                    if (countO == 3) { return rezultatgry.wygralokolko; }
+                    if (countX == 3) { return rezultatgry.wygralkrzyzyk; }
+                    if (i % 3 == 0) { countO = 0; countX = 0; }
+                    if (tablica[i] == ruch.kolko) { countO++; }
+                    if (tablica[i] == ruch.krzyzyk) { countX++; }
+                }
+
+                for (i = 0; i < 3; i++)  /// Pionowo
+                {
+                    countO = 0; countX = 0;
+                    for (int j = i; j < 9; j = j + 3)
+                    {
+                        if (tablica[j] == ruch.kolko) { countO++; }
+                        if (tablica[j] == ruch.krzyzyk) { countX++; }
+                        if (countO == 3) { return rezultatgry.wygralokolko; }
+                        if (countX == 3) { return rezultatgry.wygralkrzyzyk; }
+                    }
+                }
+                countO = 0; countX = 0;
+                for (i = 0; i < 9; i = i + 4)  /// Skos w ten sposób : \ 
+                {
+                    if (tablica[i] == ruch.kolko) { countO++; }
+                    if (tablica[i] == ruch.krzyzyk) { countX++; }
+                    if (countO == 3) { return rezultatgry.wygralokolko; }
+                    if (countX == 3) { return rezultatgry.wygralkrzyzyk; }
+                }
+
+                countO = 0; countX = 0;
+                for (i = 2; i < 7; i = i + 2)  /// Skos w ten sposób : / 
+                {
+                    if (tablica[i] == ruch.kolko) { countO++; }
+                    if (tablica[i] == ruch.krzyzyk) { countX++; }
+                    if (countO == 3) { return rezultatgry.wygralokolko; }
+                    if (countX == 3) { return rezultatgry.wygralkrzyzyk; }
+                }
+
+                for (i = 0; i < 9; i++) /// Sprawdz czy wszystkie pola sa zaznaczone
+                {
+                    if (tablica[i] == ruch.brak)
+                    { return rezultatgry.nierozstrzygnieta; }
+                }
+                return rezultatgry.remis;
+            }
+            public override string ToString()
+            {
+                string result = string.Empty;
+
+                for (int i = 0; i < 9; i++)
+                {
+                    if (i % 3 == 0) { result += "\n"; }
+
+                    if (ruch.kolko == tablica[i]) { result += " O "; }
+                    else
+                    {
+                        if (ruch.krzyzyk == tablica[i]) { result += " X "; }
+                        else { result += " . "; }
+                    }
+                }
+
+                return result;
+            }
+            public static gracz zmiengracza(gracz aktualnygracz)
+            {
+                if (aktualnygracz == gracz.kolko) return gracz.krzyzyk;
+                else return gracz.kolko;
+            }
+            public ruch zmienznak(ruch aktualnyznak)
+            {
+                if (aktualnyznak == ruch.kolko) return ruch.krzyzyk;
+                else return ruch.kolko;
+            }
+            public void wypelnij()
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    tablica[i] = ruch.brak;
+                }
+            } /// Wypelnianie tablicy 
+            public void Wyczysc()
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                tablica[i] = ruch.brak;
+                }
+            }
+    }
+}
