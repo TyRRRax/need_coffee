@@ -1,0 +1,246 @@
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+
+using namespace std;
+
+class Kulka{
+    public:
+    int v;
+    Kulka* left;
+    Kulka* right;
+    Kulka* next;
+    Kulka ()
+    {
+        left = NULL;
+        right = NULL;
+        next = NULL;
+        v = rand()%100;
+    }
+    void add(Kulka *k){
+    if(k->v < v){
+        if(left)left->add(k);
+        else left=k;
+    }
+    else if(right)right->add(k);
+        else right=k;
+    }
+
+    void add1(Kulka *temp)
+    {
+        temp->next = this;
+    }
+    void show()
+    {
+        if (left) {left->show();}
+        cout << v << " ";
+        if (right) {right->show();}
+    }
+    void show1()
+    {
+        cout << v << " ";
+        if (next)
+        {
+            next->show1();
+        }
+    }
+    Kulka *getmax()
+    {
+        if(right)
+        {
+            if(right->right)
+            {
+                return right->getmax();
+            }
+            else
+            {
+                Kulka *maxi = right;
+                right= maxi ->left;
+                maxi->left = NULL;
+                return maxi;
+            }
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+};
+
+int main()
+
+{
+    Kulka *root = NULL;
+    Kulka *root2 = NULL;
+    Kulka *root3 = NULL;
+    Kulka *temp = NULL;
+    Kulka *max1 = NULL;
+    Kulka *max2 = NULL;
+
+
+    for (int i=0; i<99; i++) /// TWORZENIE 2 DRZEWEK
+    {
+        temp = new Kulka();
+        cout << temp->v << " ";
+        if (temp->v == 0)
+        {
+            if(root2){root2->add(temp);}
+            else{root2 = temp;}
+        }
+        else
+        {
+            if ((temp->v)%3 == 0) /// podzielne przez 3
+            {if(root){root->add(temp);}
+                else{root = temp;}
+            }
+            else
+            {
+                if(root2)
+                {
+                root2->add(temp);
+                }
+                else
+                {
+                root2 = temp;
+                }
+            }
+        }
+    }
+
+    cout << endl << endl << endl;
+    cout << "\nDrzewo podzielne przez 3: \n";
+    root->show();
+    cout << "\nDrzewo niepodzielne przez 3: \n";
+    root2->show();
+    temp = root;
+
+        for (int i=0; i<99; i++)
+        {
+
+
+            if (root)
+            {
+                max1 = root->getmax();
+                if (max1 == NULL) /// prawa pusta
+                {
+                    max1 = root;
+                    root = root->left;
+                    max1->left = NULL;
+                }
+            }
+
+            if (root2)
+            {
+                max2 = root2->getmax();
+                if (max2 == NULL) /// prawa pusta
+                {
+                    max2 = root2;
+                    root2 = root2->left;
+                    max2->left = NULL;
+                }
+            }
+
+
+            if ((max1 and max2)!=0) /// Przypadek, gdzie oba drzewa sa rownej dlugosci
+            {
+                if( max1->v > max2->v)
+                {
+                    if (root3)
+                    {
+                        root3->add1(max1);
+                        root3 =max1;
+                        max1 = NULL;
+                    }
+                    else
+                    {
+                         root3 = max1;
+                         max1 = NULL;
+                    }
+                }
+                else
+                {
+                    if (root3)
+                    {
+                        root3->add1(max2);
+                        root3 = max2;
+                        max2 = NULL;
+                    }
+                    else
+                    {
+                        root3 = max2;
+                        max2 = NULL;
+                    }
+                }
+            }
+            else
+            {
+                    if(max2==0)
+                    {
+                        if (root3)
+                        {
+                        root3->add1(max1);
+                        root3 =max1;
+                        max1 = NULL;
+                        }
+                        else
+                        {
+                         root3 = max1;
+                         max1 = NULL;
+                        }
+                    }
+                    else
+                    {
+                        if(max1==0)
+                        {
+                            if (root3)
+                            {
+                            cout << "C1 ";
+                            cout << max2->v << "@ ";
+                            root3->add1(max2);
+                            root3 =max2;
+                            max2 = NULL;
+                            }
+                            else
+                            {
+                            root3 = max2;
+                            max2 = NULL;
+                            }
+                        }
+                        else
+                        {
+                            if((max1 and max2)==0)
+                            {
+                                cout << "ASD";
+                            }
+                        }
+                     }
+                }
+            }
+
+
+            /*if(max1==0)
+            {
+                    if (root3)
+                    {
+                        cout << "C1 ";
+                        cout << max2->v << "@ ";
+                        root3->add1(max2);
+                        root3 =max2;
+                        max2 = NULL;
+                    }
+                    else
+                    {
+                         root3 = max2;
+                         max2 = NULL;
+                    }
+            }
+            if((max1 or max2)==0)
+            {
+
+            }*/
+
+        cout << "\nLISTA: \n";
+        root3->show1();
+
+    return 0;
+}
