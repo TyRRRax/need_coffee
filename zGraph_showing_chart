@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using ZedGraph;
+
+namespace WindowsFormsApplication2
+{
+    public partial class Form1 : Form
+    {
+        int nrPrzebiegu;
+
+        public Form1()
+        {
+            nrPrzebiegu = 1;
+            InitializeComponent();
+        }
+
+        private void buttonNowyPrzebieg_Click(object sender, EventArgs e)
+        {
+
+
+            double amplituda = (double)(numericUpDownAmplituda.Value);
+            ZedGraph.PointPairList przebieg = new PointPairList();
+            ZedGraph.PointPairList przebieg2 = new PointPairList();
+            double okres = (double)(numericUpDownOkres.Value);
+            double XPoczatek = (double)(numericUpDownXPoczatek.Value);
+            double XKoniec = (double)(numericUpDownXKoniec.Value);
+
+            for (double x = XPoczatek ; x < XKoniec ; x+=0.01) 
+            {
+                double y = amplituda*Math.Sin((x * 2*Math.PI)/okres);
+                przebieg.Add(x,y);
+                przebieg2.Add(x, 0.9 * y, 1.1 * y);
+            }
+
+            LineItem funkcja = new LineItem(string.Format("Funkcja {0}", nrPrzebiegu), przebieg, Color.Red, SymbolType.Plus, 1);
+            zedGraphControlWykres.GraphPane.CurveList.Add(funkcja);
+            zedGraphControlWykres.GraphPane.AxisChange();
+            zedGraphControlWykres.GraphPane.XAxis.Title.Text = "Oś X";
+            zedGraphControlWykres.GraphPane.YAxis.Title.Text = "Oś Y";
+            zedGraphControlWykres.GraphPane.Title.Text = "Wykres";
+            Refresh();
+
+            // Generate a red bar with "Curve 1" in the legend
+            ErrorBarItem myCurve = zedGraphControlWykres.GraphPane.AddErrorBar("Curve 1", przebieg2, Color.Red);
+            // Make the X axis the base for this curve (this is the default)
+            /*
+            przebieg2.BarSettings.Base = BarBase.X;
+            myCurve.Bar.PenWidth = 1f;
+            // Use the HDash symbol so that the error bars look like I-beams
+            myCurve.Bar.Symbol.Type = SymbolType.HDash;
+            myCurve.Bar.Symbol.Border.Width = .1f;
+            myCurve.Bar.Symbol.IsVisible = true;
+            myCurve.Bar.Symbol.Size = 4;
+            // Fill the axis background with a color gradient
+            przebieg2.Chart.Fill = new Fill(Color.White,
+            Color.LightGoldenrodYellow, 45.0F);
+            // Calculate the Axis */
+
+        }
+
+        private void buttonCzysc_Click(object sender, EventArgs e)
+        {
+            zedGraphControlWykres.GraphPane.CurveList.Clear();
+            Refresh();
+        }
+
+        private void zedGraphControlWykres_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
