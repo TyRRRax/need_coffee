@@ -1,0 +1,82 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApplication1
+{
+    public partial class Form1 : Form
+    {
+        static FileStream fs;
+        static StreamWriter sw;
+
+        public delegate void delADD(string imie, string nazwisko, int rok, int countx); // deklaracja delegata
+        public delegate void delSHOW();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        public void Zawartosc(object sender, EventArgs e)
+        {
+            delSHOW odczytaj = delegate ()
+            {
+                Console.WriteLine();
+                // StreamReader sr = new StreamReader("C:\\Users\\Maciej\\Desktop\\Adam_Kotlarek\\ConsoleApplication4\\TextFile.txt");
+                StreamReader sr = new StreamReader("C:\\Users\\Tyrax\\Desktop\\SEM IV\\inf 4 sem\\lab7\\TextFile.txt");
+                String line = sr.ReadToEnd();
+                listaBox.Text = line;
+                sr.Close();
+            };
+            odczytaj();
+        }
+        public int Sprawdz ()
+        {
+            int wynik = 0;
+            return wynik++;
+        }
+        private void Dodaj(object sender, EventArgs e) 
+        {
+            delADD dodaj = delegate (string imiex, string nazwiskox, int rokx, int countx)
+            {
+                string s = countx + ". " + imiex + " " + nazwiskox + " " + rokx;
+                //  fs = new FileStream("C:\\Users\\Maciej\\Desktop\\Adam_Kotlarek\\ConsoleApplication4\\TextFile.txt", FileMode.Append, FileAccess.Write);
+                fs = new FileStream("C:\\Users\\Tyrax\\Desktop\\SEM IV\\inf 4 sem\\lab7\\TextFile.txt", FileMode.Append, FileAccess.Write);
+                sw = new StreamWriter(fs);
+                sw.WriteLine(s);
+                sw.Flush();
+                sw.Close();
+                fs.Close();
+            };
+
+                string imie = imieBox.Text;
+                string nazwisko = nazwiskoBox.Text;
+                int rok = int.Parse(rokBox.Text);
+                int count = Sprawdz();
+                dodaj(imie, nazwisko, rok, count);
+
+                 // Program.dodaj(imie, nazwisko, rok, counter); // przed dodaniem delegatow 
+                imieBox.Text = String.Empty;
+                nazwiskoBox.Text = String.Empty;
+                rokBox.Text = String.Empty;
+
+        }
+        private void Zamknij(object sender, EventArgs e)
+        {
+            MessageBox.Show("Zakonczyles prace programu. Do widzenia! :)");
+            Application.Exit();
+    }
+
+    }
+}
