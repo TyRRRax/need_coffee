@@ -1,0 +1,171 @@
+#include <iostream>
+#include <cstdlib>
+#include <assert.h>
+
+using namespace std;
+
+class Kulka {
+public:
+    int v;
+    Kulka *next;
+    Kulka *prev;
+    Kulka()
+    {
+        v = rand()%101;
+        next = NULL;
+        prev = NULL;
+    }
+void add_ball(Kulka *temp)
+{
+if (next)
+{
+    next -> add_ball(temp);
+}
+else
+{
+    next = temp;
+    temp->prev = this;
+}
+
+}
+void pass_ball(Kulka *temp)
+{
+    if (next)
+    {
+        if (temp->v > next->v)
+        {
+            next->pass_ball(temp);
+        }
+        else
+        {
+            this -> next -> prev = temp;
+            temp -> next = this -> next;
+            temp -> prev = this;
+            this -> next = temp;
+        }
+    }
+    else
+    {
+        next = temp;
+        temp->prev = this;
+
+    }
+}
+void show_forward()
+{
+            cout << v << " ";
+
+    if (next)
+    {
+        next -> show_forward();
+    }
+    else
+    {
+        cout << v << " ";
+        prev -> show_backward();
+    }
+}
+
+void show_backward()
+{
+    cout << v << " ";
+
+    if (prev)
+    {
+        prev -> show_backward();
+    }
+
+}
+void destroyer(int n)
+{
+
+		if (n == 0)
+		{
+			if (next)	next->prev = prev; // X Y Z (3 kulki). Jestem w Y. przechodze do prev w Z i wrzucam na X.
+			if (prev)	prev->next = next; // X Y Z (3 kulki). Jestem w Y. Przechodze do prev w X i wrzucam na Z.
+			delete this;
+		}
+		else
+		{
+			if (next) next->destroyer(n - 1); // Szukanie tej kulki, ktora nalezy usunac
+			else cout << "Error! \n";
+		}
+	}
+};
+
+int main()
+{
+    Kulka *root = new Kulka();
+    Kulka *temp = root;
+    int a = 0;
+    cout << "Sposoby wstawiania kulek do listy 2-kierunkowej \n ---------------- \n 1. Na koniec \n 2. Na poczatek \n 3. Funkcja wstawiajaca \n 4. Funkcja sortujaca \n";
+    cout << "\nTwoj wybor to: ";
+    cin >> a;
+
+    switch(a)
+    {
+    case 1:
+        {
+            for (int i=1 ; i<10 ; i++)
+            {
+                temp -> next = new Kulka ();
+                temp -> next -> prev = temp;
+                temp = temp -> next;
+            }
+
+            root -> show_forward();
+
+            break;
+        }
+    case 2:
+        {
+            for (int i=1 ; i<10 ; i++)
+            {
+                temp = new Kulka ();
+                temp -> next = root;
+                root->prev = temp;
+                root = temp;
+            }
+
+            root -> show_forward();
+
+            break;
+        }
+    case 3:
+        {
+            for (int i=1; i<10 ; i++)
+            {root -> add_ball(new Kulka());}
+
+            root->show_forward();
+
+            break;
+        }
+    case 4:
+    {   root->v = 0;
+        for (int i=1 ; i < 10 ; i++)
+        {
+        root -> pass_ball(new Kulka());
+        }
+
+        root -> show_forward();
+        break;
+    }
+    }
+    int b=0;
+    cout << "\nChcesz usunac jakas kulke? \n --------- \n 1. Tak \n 2. Nie \n";
+    cout << "Wybierz wlasciwe: ";
+    cin >> b;
+
+    if (b==1)
+    {
+            int n=0;
+            cout << "\nPodaj numer kulki do usuniecia: ";
+            cin >> n;
+
+            temp = root;
+            root -> destroyer(n-1);
+            root -> show_forward();
+    }
+
+    return 0;
+}
