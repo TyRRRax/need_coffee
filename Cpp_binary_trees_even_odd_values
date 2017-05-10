@@ -1,0 +1,113 @@
+#include <iostream>
+#include <cstdlib>
+#include <assert.h>
+
+using namespace std;
+
+class Kulka {
+   public:
+    int v;
+    Kulka *left;
+    Kulka *right;
+ ~Kulka()
+ {
+     if (left) delete left;
+     cout << " D ";
+     if (right) delete right;
+ }
+    void add_ball(Kulka *temp)
+    {
+        if (v > temp->v) /// W lewo
+        {
+            if (left)
+            {
+                left->add_ball(temp);
+            }
+            else
+            {
+                left = temp;
+            }
+        }
+        else /// w prawo
+        {
+            if (right)
+            {
+                right -> add_ball(temp);
+            }
+            else
+            {
+                right = temp;
+            }
+        }
+
+    }
+    void show()
+    {
+        if (left) {left->show();}
+        cout << v << " ";
+        if (right) {right->show();}
+    }
+};
+class Parzysta : public Kulka {
+        public:
+    Parzysta()
+    {
+        left = NULL;
+        right = NULL;
+    }
+};
+class Nieparzysta : public Kulka {
+        public:
+    Nieparzysta ()
+    {
+        left = NULL;
+        right = NULL;
+    }
+};
+
+int main()
+
+{   Kulka *root = NULL;
+    Kulka *temp = NULL;
+
+    int losowana = 0;
+    losowana = rand ()%101;
+
+    if (losowana%2)
+    {
+        root = new Nieparzysta();
+        root->v = losowana;
+    }
+    else
+    {
+        root = new Parzysta();
+        root->v = losowana;
+    }
+
+    for (int i=0; i < 9 ; i++)
+    {
+        losowana = rand () %101;
+
+        if (losowana%2) /// nieparzysta
+        {
+
+            temp = new Nieparzysta();
+            temp->v = losowana;
+            root -> add_ball(temp);
+        }
+        else
+        {
+
+            temp = new Parzysta();
+            temp->v = losowana;
+            root -> add_ball(temp);
+        }
+    }
+
+    cout << "\nWyswietlmy liste: ";
+    root -> show();
+    cout << "\n";
+    delete root;
+
+    return 0;
+}
